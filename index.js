@@ -1,7 +1,3 @@
-import { createRequire } from 'node:module'
-
-const require = createRequire(import.meta.url) 
-
 import express from 'express'
 import jwt from 'jsonwebtoken'
 
@@ -14,7 +10,7 @@ import Producto from './models/producto.js'
 import Carrito from './models/carrito.js'
 import Venta from './models/venta.js'
 
-const html = '<h1>Bienvenido a la API</h1><p>Los comandos disponibles son:</p><ul><li>GET: /productos/</li><li>GET: /productos/id</li><li>POST: /productos/</li><li>DELETE: /productos/id</li><li>PUT: /productos/id</li><li>PATCH: /productos/id</li><li>GET: /usuarios/</li><li>GET: /usuarios/id</li><li>POST: /usuarios/</li><li>DELETE: /usuarios/id</li><li>PUT: /usuarios/id</li><li>PATCH: /usuarios/id</li></ul>'
+const html = '<h1>Bienvenido a la API</h1><p>Los comandos disponibles son:</p><ul> <li>GET: /usuarios/</li> <li>GET: /administradores/</li> <li>GET: /proveedores/</li> <li>GET: /clientes/</li> <li>GET: /productos/</li> <li>GET: /carritos/</li> <li>GET: /ventas/</li> <li>GET: /usuarios/id</li> <li>GET: /administradores/id</li> <li>GET: /proveedores/id</li> <li>GET: /clientes/id</li> <li>GET: /carritos/id</li> <li>GET: /ventas/id</li> <li>POST: /usuarios/administrador/</li> <li>POST: /usuarios/proveedor/</li> <li>POST: /usuarios/cliente/</li> <li>POST: /productos/</li> <li>POST: /carrito/</li> <li>PATCH: /usuarios/id</li> <li>PATCH: /aumentarStock</li> <li>DELETE: /usuarios/id</li></ul>' 
 
 const app = express()
 
