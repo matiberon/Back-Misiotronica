@@ -1,48 +1,69 @@
+### Simular formulario de loggeo.
+POST http://localhost:1234/auth
+Content-Type: application/json
+
+    {
+        "nombre_usuario": "juan.perez",
+        "password": "juan123"
+    }
+
 ### Obtencion de todos los Usuarios.
 GET http://localhost:1234/usuarios
 
 ### Obtencion de todos los Administradores.
 GET http://localhost:1234/administradores
+Authorization: Bearer
 
 ### Obtencion de todos los Proveedores.
 GET http://localhost:1234/proveedores
+Authorization: Bearer
 
 ### Obtencion de todos los Clientes.
 GET http://localhost:1234/clientes
+Authorization: Bearer
 
 ### Obtencion de todos los Productos.
 GET http://localhost:1234/productos
 
 ### Obtencion de todos los Carritos.
 GET http://localhost:1234/carritos
+Authorization: Bearer
 
 ### Obtencion de todas las Ventas.
 GET http://localhost:1234/ventas
+Authorization: Bearer
 
 ### Obtencion de los datos de un Usuario en particular segun su id.
 GET http://localhost:1234/usuarios/2
+Authorization: Bearer
 
 ### Obtencion de los datos de un Administrador en particular segun su id.
 GET http://localhost:1234/administradores/7
+Authorization: Bearer
 
 ### Obtencion de los datos de un Proveedor en particular segun su id.
 GET http://localhost:1234/proveedores/5
+Authorization: Bearer
 
 ### Obtencion de los datos de un Cliente en particular segun su id.
 GET http://localhost:1234/clientes/1
+Authorization: Bearer
 
 ### Obtencion de los datos de un Producto en particular segun su id.
 GET http://localhost:1234/productos/1
 
 ### Obtencion de los datos de un Carrito en particular segun su id.
 GET http://localhost:1234/carritos/1
+Authorization: Bearer
 
 ### Obtencion de los datos de una Venta en particular segun su id.
 GET http://localhost:1234/ventas/1
+Authorization: Bearer
 
 ### Crear un nuevo USUARIO-ADMINISTRADOR
 POST http://localhost:1234/usuarios/administrador
 Content-Type: application/json
+Authorization: Bearer
 
 {
   "nombre_usuario": "antonela.sosa",
@@ -56,6 +77,7 @@ Content-Type: application/json
 ### Crear un nuevo USUARIO-PROVEEDOR
 POST http://localhost:1234/usuarios/proveedor
 Content-Type: application/json
+Authorization: Bearer
 
 {
   "nombre_usuario": "distribuidora.cholita",
@@ -87,8 +109,10 @@ Content-Type: application/json
 }
 
 ### Crear un nuevo Producto.
+
 POST http://localhost:1234/productos
 Content-Type: application/json
+Authorization: Bearer
 
 {
     "nombre_producto": "Transistor lgaa2",
@@ -112,29 +136,22 @@ Content-Type: application/json
 ###  Modificar algun atributo de usuario segun su id.
 PATCH http://localhost:1234/usuarios/1
 Content-Type: application/json
+Authorization: Bearer
 
 {
     "nombre_usuario": "miguel.carrera"
 }
 
+### Modificar el stock de un producto.
+PATCH http://localhost:1234/aumentarStock
+Content-Type: application/json
+Authorization: Bearer
+
+{
+    "id_producto": 1,
+    "aumentarStock": 30
+}
+
 ### Eliminar un usuario de la base de datos segun su id.
 DELETE http://localhost:1234/usuarios/10
-
-
-
-
-
-
-
-### OTROS REQUESTS
-### Simular formulario de loggeo.
-
-POST http://localhost:1234/auth
-Content-Type: application/json
-
-    {
-        "usuario": "juan.perez",
-        "password": "juan123"
-    }
-
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.lYVxu4ePgYOxou2L-_g6xkauJ-YYGwNDHclOI0NKpiE
+Authorization: Bearer

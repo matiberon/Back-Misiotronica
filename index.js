@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module'
 
-const require = createRequire(import.meta.url)
+const require = createRequire(import.meta.url) 
 
 import express from 'express'
 import jwt from 'jsonwebtoken'
@@ -70,13 +70,13 @@ app.get('/', (req, res) => {
 
 app.post('/auth', async (req,res) => {
 
-	const usuarioABuscar = req.body.usuario
+	const usuarioABuscar = req.body.nombre_usuario
 	const passwordRecibido = req.body.password
 
 	let usuarioEncontrado = ''
 
 	try {
-		usuarioEncontrado = await Usuario.findAll({where:{usuario:usuarioABuscar}})
+		usuarioEncontrado = await Usuario.findAll({where:{nombre_usuario:usuarioABuscar}})
 
 		if (usuarioEncontrado == ''){
 			return res.status(400).json({message: 'Usuario no encontrado.'})  
@@ -98,7 +98,9 @@ app.post('/auth', async (req,res) => {
 		usuario,
 		nivel,
 		exp: Date.now() + (60 * 1000)
-	}, process.env.SECRET_KEY)
+	}, 
+	process.env.SECRET_KEY
+	)
 
 	res.status(200).json({accessToken: token })
 })
@@ -480,6 +482,42 @@ app.patch('/usuarios/:id', async (req,res) => {
 		res.status(204).json({'message':'Usuario no encontrado.'})
 	}
 })
+
+//Modificar el stock de un producto.
+app.patch('/aumentarStock', async (req, res) => {
+	try {
+		let idProductoAEditar = req.body.id_producto
+  
+		if (!idProductoAEditar) {
+			return res.status(400).json({ 'message': 'ID de producto no válido' })
+		}
+  
+		const productoAActualizar = await Producto.findByPk(idProductoAEditar)
+  
+		if (!productoAActualizar) {
+			return res.status(204).json({ 'message': 'Producto no encontrado' })
+		}
+  
+		// Agrega mensajes de registro para seguir el valor de stock
+		console.log('Stock antes de la actualización:', productoAActualizar.stock)
+  
+		if (req.body.aumentarStock !== undefined) {
+			console.log('Valor de req.body.aumentarStock:', req.body.aumentarStock)
+			productoAActualizar.stock += req.body.aumentarStock
+  
+			// Agrega otro mensaje de registro después de la actualización
+			console.log('Stock después de la actualización:', productoAActualizar.stock)
+		}
+  
+		await productoAActualizar.save()
+  
+		res.status(200).send('Stock actualizado.')
+	} catch (error) {
+		console.error('Error al actualizar el stock del producto:', error)
+		res.status(500).json({ 'message': 'Error en el servidor' })
+	}
+})
+  
 		
 //Eliminar un usuario de la base de datos segun su id (tambien elimina el Administrador/Cliente/Proveedor asociado)
 app.delete ('/usuarios/:id', async (req, res) => {
