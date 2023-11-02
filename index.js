@@ -20,6 +20,7 @@ const app = express()
 
 const expossedPort = 1234
 
+//Middleware para la autenticacion de token recibido.
 function autenticacionDeToken(req, res, next){
 	const headerAuthorization = req.headers['authorization']
 
@@ -32,6 +33,7 @@ function autenticacionDeToken(req, res, next){
 	let payload = null 
 
 	try {
+		//Intentamos sacar los datos del payload del token.
 		payload = jwt.verify(tokenRecibido, process.env.SECRET_KEY)
 	} catch (error) {
 		return res.status(401).json({message: 'Token invalido.'})
@@ -41,7 +43,9 @@ function autenticacionDeToken(req, res, next){
 		return res.status(401).json({message: 'Token caducado.'})
 	}
 
+	//Pasadas las validaciones.
 	req.user = payload.sub
+	req.nivelDelUsuario = payload.nivel
 
 	next()
 }
@@ -70,11 +74,13 @@ app.get('/', (req, res) => {
 
 app.post('/auth', async (req,res) => {
 
+	//Obtencion de datos de loggeo.
 	const usuarioABuscar = req.body.nombre_usuario
 	const passwordRecibido = req.body.password
 
 	let usuarioEncontrado = ''
 
+	//Comprobacion del usuario.
 	try {
 		usuarioEncontrado = await Usuario.findAll({where:{nombre_usuario:usuarioABuscar}})
 
@@ -85,14 +91,17 @@ app.post('/auth', async (req,res) => {
 		return res.status(400).json({message: 'Usuario no encontrado.'})
 	}
 
+	//Comprobacion del password.
 	if (usuarioEncontrado[0].password !== passwordRecibido) {
 		return res.status(400).json({message: 'Contraseña incorrecta.'})
 	}
 
-	const sub = usuarioEncontrado[0].id
-	const usuario = usuarioEncontrado[0].usuario
-	const nivel = usuarioEncontrado[0].nivel
+	//Generacion del token.
+	const sub = usuarioEncontrado[0].id_usuario
+	const usuario = usuarioEncontrado[0].nombre_usuario
+	const nivel = usuarioEncontrado[0].nivel_usuario
 
+	//Firma y construccion del token.
 	const token = jwt.sign({
 		sub,
 		usuario,
@@ -109,8 +118,11 @@ app.get('/', (req, res) => {
 	res.status(200).send(html)
 })
 
-//Obtener todos los usuarios.
-app.get('/usuarios', async (req, res) => {
+// Obtener todos los usuarios. Permitido solo para los administradores.
+app.get('/usuarios', autenticacionDeToken, async (req, res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		const usuarios = await Usuario.findAll()
 
@@ -120,8 +132,11 @@ app.get('/usuarios', async (req, res) => {
 	}
 })
 
-//Obtener todos los administradores.
-app.get('/administradores', async (req,res) => {
+//Obtener todos los administradores. Permitido solo para los administradores.
+app.get('/administradores', autenticacionDeToken, async (req,res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		const administradores = await Administrador.findAll()
 
@@ -131,8 +146,11 @@ app.get('/administradores', async (req,res) => {
 	}
 })
 
-//Obtener todos los proveedores.
-app.get('/proveedores', async (req,res) => {
+//Obtener todos los proveedores. Permitido solo para los administradores.
+app.get('/proveedores', autenticacionDeToken, async (req,res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}	
 	try {
 		const proveedores = await Proveedor.findAll()
 
@@ -142,8 +160,11 @@ app.get('/proveedores', async (req,res) => {
 	}
 })
 
-//Obtener todos los clientes.
-app.get('/clientes', async (req,res) => {
+//Obtener todos los clientes. Permitido solo para los administradores.
+app.get('/clientes', autenticacionDeToken, async (req,res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		const clientes = await Cliente.findAll()
 
@@ -153,7 +174,7 @@ app.get('/clientes', async (req,res) => {
 	}
 })
 
-//Obtener todos los productos.
+//Obtener todos los productos. Permitido para cualquier usuario.
 app.get('/productos', async (req, res) => {
 	try {
 		const productos = await Producto.findAll()
@@ -164,8 +185,11 @@ app.get('/productos', async (req, res) => {
 	}
 })
 
-//Obtener todos los carritos.
-app.get('/carritos', async (req, res) => {
+//Obtener todos los carritos. Permitido solo para los administradores.
+app.get('/carritos', autenticacionDeToken, async (req, res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		const carritos = await Carrito.findAll()
 
@@ -175,8 +199,11 @@ app.get('/carritos', async (req, res) => {
 	}
 })
 
-//Obtener todas las ventas.
-app.get('/ventas', async (req, res) => {
+//Obtener todas las ventas. Permitido solo para los administradores.
+app.get('/ventas', autenticacionDeToken, async (req, res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		const ventas = await Venta.findAll()
 
@@ -186,8 +213,11 @@ app.get('/ventas', async (req, res) => {
 	}
 })
 
-//Obtener los datos de un Usuario en particular segun su id.
-app.get('/usuarios/:id', async (req,res) => {
+//Obtener los datos de un Usuario en particular segun su id. Permitido solo para los administradores.
+app.get('/usuarios/:id', autenticacionDeToken, async (req,res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		let usuarioId = parseInt(req.params.id)
 		let usuarioEncontrado = await Usuario.findByPk(usuarioId)
@@ -202,8 +232,11 @@ app.get('/usuarios/:id', async (req,res) => {
 	}
 })
 
-//Obtener los datos de un Administrador en particular segun su id.
-app.get('/administradores/:id', async (req,res) => {
+//Obtener los datos de un Administrador en particular segun su id. Permitido solo para los administradores.
+app.get('/administradores/:id', autenticacionDeToken, async (req,res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		let administradorId = parseInt(req.params.id)
 		let administradorEncontrado = await Administrador.findByPk(administradorId)
@@ -218,8 +251,11 @@ app.get('/administradores/:id', async (req,res) => {
 	}
 })
 
-//Obtener los datos de un Proveedor en particular segun su id.
-app.get('/proveedores/:id', async (req,res) => {
+//Obtener los datos de un Proveedor en particular segun su id. Permitido solo para los administradores.
+app.get('/proveedores/:id', autenticacionDeToken, async (req,res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		let proveedorId = parseInt(req.params.id)
 		let proveedorEncontrado = await Proveedor.findByPk(proveedorId)
@@ -234,8 +270,11 @@ app.get('/proveedores/:id', async (req,res) => {
 	}
 })
 
-//Obtener los datos de un Cliente en particular segun su id.
-app.get('/clientes/:id', async (req,res) => {
+//Obtener los datos de un Cliente en particular segun su id. Permitido solo para los administradores.
+app.get('/clientes/:id', autenticacionDeToken, async (req,res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		let clienteId = parseInt(req.params.id)
 		let clienteEncontrado = await Cliente.findByPk(clienteId)
@@ -250,7 +289,7 @@ app.get('/clientes/:id', async (req,res) => {
 	}
 })
 
-//Obtener los datos de un Producto en particular segun su id.
+//Obtener los datos de un Producto en particular segun su id. Permitido para cualquier usuario.
 app.get('/productos/:id', async (req,res) => {
 	try {
 		let productoId = parseInt(req.params.id)
@@ -266,7 +305,7 @@ app.get('/productos/:id', async (req,res) => {
 	}
 })
 
-//Obtener los datos de un Carrito en particular segun su id.
+//Obtener los datos de un Carrito en particular segun su id. Permitido para cualquier usuario.
 app.get('/carritos/:id', async (req,res) => {
 	try {
 		let carritoId = parseInt(req.params.id)
@@ -282,7 +321,7 @@ app.get('/carritos/:id', async (req,res) => {
 	}
 })
 
-//Obtener los datos de una Venta en particular segun su id.
+//Obtener los datos de una Venta en particular segun su id. Permitido para cualquier usuario.
 app.get('/ventas/:id', async (req,res) => {
 	try {
 		let ventaId = parseInt(req.params.id)
@@ -298,8 +337,11 @@ app.get('/ventas/:id', async (req,res) => {
 	}
 })
 
-//Crear un nuevo USUARIO-ADMINISTRADOR.
-app.post('/usuarios/administrador', async (req, res) => {
+//Crear un nuevo USUARIO-ADMINISTRADOR. Permitido solo para los administradores.
+app.post('/usuarios/administrador', autenticacionDeToken, async (req, res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		// Crear un nuevo usuario en la tabla Usuario.
 		const nuevoUsuario = await Usuario.create({
@@ -327,8 +369,11 @@ app.post('/usuarios/administrador', async (req, res) => {
 	}
 })
 
-//Crear un nuevo USUARIO-PROVEEDOR
-app.post('/usuarios/proveedor', async (req, res) => {
+//Crear un nuevo USUARIO-PROVEEDOR. Permitido solo para los administradores.
+app.post('/usuarios/proveedor', autenticacionDeToken, async (req, res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		// Crear un nuevo usuario en la tabla Usuario.
 		const nuevoUsuario = await Usuario.create({
@@ -359,7 +404,7 @@ app.post('/usuarios/proveedor', async (req, res) => {
 	}
 })
 
-//Crear un nuevo USUARIO-CLIENTE
+//Crear un nuevo USUARIO-CLIENTE. Permitido para cualquier usuario.
 app.post('/usuarios/cliente', async (req, res) => {
 	try {
 		// Crear un nuevo usuario en la tabla Usuario
@@ -392,8 +437,11 @@ app.post('/usuarios/cliente', async (req, res) => {
 	}
 })
 
-//Crear un nuevo producto.
-app.post('/productos', async (req,res) => {
+//Crear un nuevo producto. Permitido para los proveedores y administradores.
+app.post('/productos', autenticacionDeToken, async (req,res) => {
+	if (req.nivelDelUsuario ==1){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		const nuevoProducto = req.body
 	
@@ -415,7 +463,7 @@ app.post('/productos', async (req,res) => {
 	}
 })
 	
-//Crear un nuevo carrito y venta.
+//Crear un nuevo carrito y venta. Permitido para cualquier usuario.
 app.post('/carrito', async (req, res) => {
 	try {
 		// Obtener los datos del cuerpo de la solicitud
@@ -464,8 +512,11 @@ app.post('/carrito', async (req, res) => {
 	}
 })
 	
-//Modificar algun atributo de usuario.
-app.patch('/usuarios/:id', async (req,res) => {
+//Modificar algun atributo de usuario. Permitido solo para administradores.
+app.patch('/usuarios/:id', autenticacionDeToken, async (req,res) => {
+	if (req.nivelDelUsuario !==3){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}	
 	let idUsuarioAEditar = parseInt(req.params.id)
 
 	try{
@@ -483,8 +534,11 @@ app.patch('/usuarios/:id', async (req,res) => {
 	}
 })
 
-//Modificar el stock de un producto.
-app.patch('/aumentarStock', async (req, res) => {
+//Modificar el stock de un producto. Permitido para administradores o proveedores.
+app.patch('/aumentarStock', autenticacionDeToken, async (req, res) => {
+	if (req.nivelDelUsuario ==1){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		let idProductoAEditar = req.body.id_producto
   
@@ -519,8 +573,11 @@ app.patch('/aumentarStock', async (req, res) => {
 })
   
 		
-//Eliminar un usuario de la base de datos segun su id (tambien elimina el Administrador/Cliente/Proveedor asociado)
-app.delete ('/usuarios/:id', async (req, res) => {
+//Eliminar un usuario de la base de datos segun su id (tambien elimina el Administrador/Cliente/Proveedor asociado). Permitido solo para administradores.
+app.delete ('/usuarios/:id', autenticacionDeToken, async (req, res) => {
+	if (req.nivelDelUsuario ==1){
+		return res.status(401).json({' message ': 'No tiene permisos para esta accion.'})
+	}
 	try {
 		const idUsuarioABorrar = req.params.id
 

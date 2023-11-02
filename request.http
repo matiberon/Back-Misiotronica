@@ -1,4 +1,23 @@
-### Simular formulario de loggeo.
+### Simular formularios de loggeo.
+### Login como Administrador.
+POST http://localhost:1234/auth
+Content-Type: application/json
+
+    {
+        "nombre_usuario": "ana.martinez",
+        "password": "ana123"
+    }
+
+### Login como Proveedor.
+POST http://localhost:1234/auth
+Content-Type: application/json
+
+    {
+        "nombre_usuario": "distrimax",
+        "password": "distrimax123"
+    }
+
+### Login como Cliente.
 POST http://localhost:1234/auth
 Content-Type: application/json
 
@@ -7,61 +26,60 @@ Content-Type: application/json
         "password": "juan123"
     }
 
-### Obtencion de todos los Usuarios.
+### Obtencion de todos los Usuarios. Permitido solo para los Administradores.
 GET http://localhost:1234/usuarios
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsInVzdWFyaW8iOiJhbmEubWFydGluZXoiLCJuaXZlbCI6MywiZXhwIjoxNjk4OTA1MTUxNzI4LCJpYXQiOjE2OTg5MDUwOTF9.DnMrBMSwOi0YTB9ERg28nBNxg0b7m6xdiqonyxup3Q4
 
-### Obtencion de todos los Administradores.
+### Obtencion de todos los Administradores. Permitido solo para los administradores.
 GET http://localhost:1234/administradores
-Authorization: Bearer
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsInVzdWFyaW8iOiJkaXN0cmltYXgiLCJuaXZlbCI6MiwiZXhwIjoxNjk4OTA0ODgwOTI4LCJpYXQiOjE2OTg5MDQ4MjB9.jMLu6U5rpXUDGblyZkiw4xcK3Q71RUTjJzKJGfJDpjo
 
-### Obtencion de todos los Proveedores.
+### Obtencion de todos los Proveedores. Permitido solo para los administradores.
 GET http://localhost:1234/proveedores
 Authorization: Bearer
 
-### Obtencion de todos los Clientes.
+### Obtencion de todos los Clientes. Permitido solo para los administradores.
 GET http://localhost:1234/clientes
 Authorization: Bearer
 
-### Obtencion de todos los Productos.
+### Obtencion de todos los Productos. Permitido para cualquier usuario.
 GET http://localhost:1234/productos
 
-### Obtencion de todos los Carritos.
+### Obtencion de todos los Carritos. Permitido solo para los administradores.
 GET http://localhost:1234/carritos
 Authorization: Bearer
 
-### Obtencion de todas las Ventas.
+### Obtencion de todas las Ventas. Permitido solo para los administradores.
 GET http://localhost:1234/ventas
 Authorization: Bearer
 
-### Obtencion de los datos de un Usuario en particular segun su id.
+### Obtencion de los datos de un Usuario en particular segun su id. Permitido solo para los administradores.
 GET http://localhost:1234/usuarios/2
 Authorization: Bearer
 
-### Obtencion de los datos de un Administrador en particular segun su id.
+### Obtencion de los datos de un Administrador en particular segun su id. Permitido solo para los administradores.
 GET http://localhost:1234/administradores/7
 Authorization: Bearer
 
-### Obtencion de los datos de un Proveedor en particular segun su id.
+### Obtencion de los datos de un Proveedor en particular segun su id. Permitido solo para los administradores.
 GET http://localhost:1234/proveedores/5
 Authorization: Bearer
 
-### Obtencion de los datos de un Cliente en particular segun su id.
+### Obtencion de los datos de un Cliente en particular segun su id. Permitido solo para los administradores.
 GET http://localhost:1234/clientes/1
 Authorization: Bearer
 
-### Obtencion de los datos de un Producto en particular segun su id.
+### Obtencion de los datos de un Producto en particular segun su id. Permitido para cualquier usuario.
 GET http://localhost:1234/productos/1
 
-### Obtencion de los datos de un Carrito en particular segun su id.
+### Obtencion de los datos de un Carrito en particular segun su id. Permitido para cualquier usuario.
 GET http://localhost:1234/carritos/1
-Authorization: Bearer
 
-### Obtencion de los datos de una Venta en particular segun su id.
+### Obtencion de los datos de una Venta en particular segun su id. Permitido para cualquier usuario.
 GET http://localhost:1234/ventas/1
-Authorization: Bearer
 
-### Crear un nuevo USUARIO-ADMINISTRADOR
-POST http://localhost:1234/usuarios/administrador
+### Crear un nuevo USUARIO-ADMINISTRADOR. Permitido solo para los administradores.
+POST http://localhost:1234/usuarios/administrador 
 Content-Type: application/json
 Authorization: Bearer
 
@@ -74,7 +92,7 @@ Authorization: Bearer
   "telefono": 123456789
 }
 
-### Crear un nuevo USUARIO-PROVEEDOR
+### Crear un nuevo USUARIO-PROVEEDOR. Permitido solo para los administradores.
 POST http://localhost:1234/usuarios/proveedor
 Content-Type: application/json
 Authorization: Bearer
@@ -91,7 +109,7 @@ Authorization: Bearer
   "ciudad": "Santa Fe"
 }
 
-#### Crear un nuevo USUARIO-CLIENTE
+#### Crear un nuevo USUARIO-CLIENTE. Permitido para cualquier usuario.
 POST http://localhost:1234/usuarios/cliente
 Content-Type: application/json
 
@@ -108,11 +126,11 @@ Content-Type: application/json
   "ciudad": "Zarate"
 }
 
-### Crear un nuevo Producto.
+### Crear un nuevo Producto. Permitido para los proveedores y administradores.
 
 POST http://localhost:1234/productos
 Content-Type: application/json
-Authorization: Bearer
+Authorization: Bearer 
 
 {
     "nombre_producto": "Transistor lgaa2",
@@ -121,7 +139,7 @@ Authorization: Bearer
     "id_proveedor": 5
 }
 
-### Crear un nuevo Carrito y Venta.
+### Crear un nuevo Carrito y Venta. Permitido para cualquier usuario.
 POST http://localhost:1234/carrito
 Content-Type: application/json
 
@@ -133,7 +151,7 @@ Content-Type: application/json
   ]
 }
 
-###  Modificar algun atributo de usuario segun su id.
+###  Modificar algun atributo de usuario segun su id. Permitido solo para administradores.
 PATCH http://localhost:1234/usuarios/1
 Content-Type: application/json
 Authorization: Bearer
@@ -142,7 +160,7 @@ Authorization: Bearer
     "nombre_usuario": "miguel.carrera"
 }
 
-### Modificar el stock de un producto.
+### Modificar el stock de un producto. Permitido para proveedores o administradores.
 PATCH http://localhost:1234/aumentarStock
 Content-Type: application/json
 Authorization: Bearer
@@ -152,6 +170,6 @@ Authorization: Bearer
     "aumentarStock": 30
 }
 
-### Eliminar un usuario de la base de datos segun su id.
+### Eliminar un usuario de la base de datos segun su id. Permitido solo para administradores.
 DELETE http://localhost:1234/usuarios/10
 Authorization: Bearer
