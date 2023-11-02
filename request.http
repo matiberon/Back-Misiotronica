@@ -28,7 +28,7 @@ Content-Type: application/json
 
 ### Obtencion de todos los Usuarios. Permitido solo para los Administradores.
 GET http://localhost:1234/usuarios
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsInVzdWFyaW8iOiJhbmEubWFydGluZXoiLCJuaXZlbCI6MywiZXhwIjoxNjk4OTA1MTUxNzI4LCJpYXQiOjE2OTg5MDUwOTF9.DnMrBMSwOi0YTB9ERg28nBNxg0b7m6xdiqonyxup3Q4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsInVzdWFyaW8iOiJhbmEubWFydGluZXoiLCJuaXZlbCI6MywiZXhwIjoxNjk4OTUxMjk4MjI2LCJpYXQiOjE2OTg5NTEyMzh9.SYBdXuArd4XY85c6PzIQg6tLSTMnrW_2_4nKw5My3MM
 
 ### Obtencion de todos los Administradores. Permitido solo para los administradores.
 GET http://localhost:1234/administradores
@@ -163,7 +163,7 @@ Authorization: Bearer
 ### Modificar el stock de un producto. Permitido para proveedores o administradores.
 PATCH http://localhost:1234/aumentarStock
 Content-Type: application/json
-Authorization: Bearer
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsInVzdWFyaW8iOiJkaXN0cmltYXgiLCJuaXZlbCI6MiwiZXhwIjoxNjk4OTUyMzk3NDIwLCJpYXQiOjE2OTg5NTIzMzd9.tK_ESLBH13bDrzk9iAMdCE-7GktFLmg-HabSz9YlRn4
 
 {
     "id_producto": 1,
